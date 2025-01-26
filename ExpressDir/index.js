@@ -19,5 +19,5 @@ app.get("/", (req ,res)=>{
 
 app.get("/search", (req ,res)=>{
     console.log(req.query);
-    res.send("sucess");
+    res.send("your sucess ");
 })
