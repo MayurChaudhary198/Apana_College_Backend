@@ -37,6 +37,12 @@ const User = mongoose.model("User", userSchema);
 // })
 
 
+
+// User.deleteOne({name:"Bruce"}).then((res)=>{console.log(res)})
+
+User.deleteMany({age:{$gt : 49}}).then((res)=>{console.log(res)})
+
+
 // const user1 = new User({
 //     name: "Adam",
 //     email: "adam@yahoo.in",
