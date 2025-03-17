@@ -130,7 +130,7 @@ app.post("/listings/:id/reviews", validateReview, wrapAsync(async (req,res) => {
 
 //Delete Review Route
 
-app.delete("/listing/:id/reviews/:reviewId" , wrapAsync(async(req,res) => {
+app.delete("/listings/:id/reviews/:reviewId" , wrapAsync(async(req,res) => {
     let {id,reviewId} = req.params;
 
     await Listing.findByIdAndUpdate(id ,{$pull: {reviews : reviewId}} );
