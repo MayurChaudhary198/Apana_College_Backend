@@ -8,10 +8,15 @@ const ejsMate = require('ejs-mate');
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
 
 
-const listenings = require("./routes/listing.js");
-const reviews = require('./routes/review.js');
+const listeningRouter = require("./routes/listing.js");
+const reviewRouter = require('./routes/review.js');
+const userRouter = require('./routes/user.js');
+
 
 //Connecting Database
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
@@ -53,40 +58,40 @@ app.get("/",  (req, res) => {
 app.use(session(sessionOptions));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 app.use((req,res,next)=> {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
-    
     next();
 })
 
-
-
-app.use("/listings" , listenings)
-
-app.use("/listings/:id/reviews", reviews)
-
-
-
-
-
-
-
-
-
-// app.get("/testListing", async (req, res) => {
-//     let sampleListing = new Listing({
-//         title: "My New Villa",
-//         description: "by new beach",
-//         price: 1200,
-//         location: "kalol, Gnadhinagar",
-//         country: "India"
+// app.get("/demouser" , async (req,res) => {
+//     let fakeUser = new User({
+//         email : "mayur@gmail.com",
+//         username : "Mayur"
 //     })
 
-//     await sampleListing.save();
-//     console.log("Saved");
-//     res.send("Sucessful");
-// });
+//     let registerdUser = await User.register(fakeUser , "helloworld");
+//     res.send(registerdUser);
+// })
+
+
+app.use("/listings" , listeningRouter);
+app.use("/listings/:id/reviews", reviewRouter);
+app.use("/", userRouter);
+
+
+
+
+
+
 app.all("*",(req ,res, next) => {
     next(new ExpressError(404,"Page Not Found!"))
 })
