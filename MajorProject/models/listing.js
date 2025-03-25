@@ -11,15 +11,16 @@ const listingSchema = new Schema({
     },
     description : String,
     image: {
-        filename: {
+      url: {
+        type: String,
+        default : "https://images.pexels.com/photos/2304204/pexels-photo-2304204.jpeg?auto=compress&cs=tinysrgb&w=1200&lazy=load"
+        // required: true,
+      },  
+      filename: {
           type: String,
           // required: true,
         },
-        url: {
-          type: String,
-          default : "https://images.pexels.com/photos/2304204/pexels-photo-2304204.jpeg?auto=compress&cs=tinysrgb&w=1200&lazy=load"
-          // required: true,
-        },
+       
       },
     price : Number,
     location : String,
