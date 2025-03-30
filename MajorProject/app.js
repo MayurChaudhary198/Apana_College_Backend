@@ -2,6 +2,8 @@ if(process.env.NODE_ENV != "production"){
     require('dotenv').config();
 }
 
+const Listing = require("./models/listing.js");
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -94,7 +96,29 @@ app.use("/", userRouter);
 
 
 
+app.get("/search", async (req, res) => {
+    const query = req.query.query; // Get the search query from URL
+    if (!query) {
+        return res.json([]); // Return empty array if no query
+    }
 
+    try {
+        // Assuming you have a `Listing` model in MongoDB
+        const listings = await Listing.find({
+            $or: [
+                { title: { $regex: query, $options: "i" } },  // Search in title
+                { location: { $regex: query, $options: "i" } },   // Search in city
+                { country: { $regex: query, $options: "i" } } // Search in country
+            ]
+            
+        }).limit(5); // Limit results to 5
+
+        res.json(listings); // Send results as JSON
+    } catch (error) {
+        console.error("Search error:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 
 app.all("*",(req ,res, next) => {
@@ -107,6 +131,9 @@ app.use((err, req, res, next) => {
     // res.status(statusCode).send(message);
 })
 
+
+
 app.listen(8080, () => {
     console.log("Server is listening to port 8080");
 });
+
